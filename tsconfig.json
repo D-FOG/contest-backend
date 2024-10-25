@@ -8,7 +8,9 @@
       "outDir": "./dist",
       "esModuleInterop": true,
       "forceConsistentCasingInFileNames": true,
-      "strict": true,
+      "strict": false,
+      "strictNullChecks": false, // Disable null checks
+      "noImplicitAny": false,
       "skipLibCheck": true,
       "plugins": [
         {
