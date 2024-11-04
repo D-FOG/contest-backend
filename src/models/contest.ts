@@ -1,50 +1,137 @@
-import mongoose, { Document } from 'mongoose';
+import mongoose from 'mongoose'
 
-interface IContest extends Document {
-  productName: string;
-  tags: string[]; // Array for multiple tags like 'farming' and 'promo'
-  videoUrl?: string;
-  referenceUrl?: string;
-  goal?: string;
-  category: string; // Required
-  campaign: string; // Required
-  startTime?: Date;
-  imageUrl?: string;
-  feedImageUrl?: string;
-  currency?: 'USD' | 'NGN'; // Restricted to USD or NGN
-  productCode?: string;
-  premium?: boolean;
-  payToken?: string;
-  amount?: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const ContestSchema = new mongoose.Schema<IContest>({
-  productName: { type: mongoose.Schema.Types.String, required: true, trim: true },
-  tags: { type: [mongoose.Schema.Types.String], default: [] },
-  videoUrl: { type: mongoose.Schema.Types.String },
-  referenceUrl: { type: mongoose.Schema.Types.String },
-  goal: { type: mongoose.Schema.Types.String },
-  category: { type: mongoose.Schema.Types.String, required: true, trim: true },
-  campaign: { type: mongoose.Schema.Types.String, required: true, trim: true },
-  startTime: { type: mongoose.Schema.Types.Date, default: global.Date.now() },
-  imageUrl: { type: mongoose.Schema.Types.String },
-  feedImageUrl: { type: mongoose.Schema.Types.String },
-  currency: {
-    type: mongoose.Schema.Types.String,
-    enum: ['USD', 'NGN'],
-    default: 'USD', // Default currency
+const ContestSchema = new mongoose.Schema(
+  {
+    productCode: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    minParticipants: {
+      type: Number,
+      required: true,
+      default: 10,
+    },
+    contestFee: {
+      type: Number,
+      default: 0,
+      required: false,
+    },
+    private: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    productName: {
+      type: String,
+      required: true,
+    },
+    referenceURL: {
+      type: String,
+      required: false,
+      default: null,
+    },
+    imageURL: {
+      type: String,
+      required: false,
+      default: null
+    },
+    currency: {
+      type: String,
+      required: true,
+    },
+    contestFilled: {
+      type: Boolean,
+      default: false,
+    },
+    premium: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    amount: {
+      type: Number,
+      required: true,
+    },
+    likes: {
+      type: Array,
+      default: [],
+    },
+    // Might not need the tapData field
+    // tapData: {
+    //   type: Array,
+    //   required: false,
+    // },
+    gameData: {
+      type: Array,
+      required: false,
+    },
+    supporters: {
+      type: Array,
+      // default: [],
+      required: false,
+    },
+    completed: {
+      type: Boolean,
+      default: false,
+    },
+    category: {
+      type: String,
+      required: true,
+    },
+    isLocked: {
+      required: true,
+      type: Boolean,
+      default: true,
+    },
+    startTime: {
+      type: Date,
+      required: true,
+      // default: null
+    },
+    // an array of that describe what a contest is about. e.g: GEM, farm
+    tags: {
+      type: Array,
+      required: true,
+      default: [],
+    },
+    searchIndex: {
+      type: String,
+      required: false,
+    },
+    adPlacementFee: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+    feedImageURL: {
+      type: String,
+      required: false,
+    },
+    isPayToken: {
+      type: Boolean,
+      default: false
+    },
+    referralBonus: {
+      type: Number,
+      required: false,
+    },
+    moreTapsLimit: {
+      type: Number,
+      default: 3
+    }
   },
-  productCode: { type: mongoose.Schema.Types.String },
-  premium: { type: mongoose.Schema.Types.Boolean, default: false },
-  payToken: { type: mongoose.Schema.Types.String },
-  amount: { type: mongoose.Schema.Types.Number, default: 0 },
-}, {
-  timestamps: true, // Automatically add createdAt and updatedAt timestamps
-});
+  { timestamps: true },
+)
 
-// Compile the schema into a model
-const Contest = mongoose.model<IContest>('Contest', ContestSchema);
+// Pre-save middleware to replace spaces with hyphens in searchIndex
+ContestSchema.pre('save', function (next) {
+  if (this.searchIndex) {
+    this.searchIndex = this.searchIndex.replace(/\s+/g, '-')
+  }
+  next()
+})
 
-export default Contest;
+const ContestModel = mongoose.model('Contest', ContestSchema)
+
+export default ContestModel
