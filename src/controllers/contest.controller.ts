@@ -2,12 +2,87 @@ import { Request, Response } from 'express';
 import Contest from '../models/contest';
 import redisClient from '../config/redis';
 import { Server } from 'socket.io';
+import multer from 'multer';
+import AWS from 'aws-sdk';
 
 // Set up the Redis and Socket.IO instances (assuming io is passed from app.js)
 let io: Server;
 
 export const setSocketIo = (socketIoInstance: Server) => {
   io = socketIoInstance;
+};
+
+//seting up aws
+const s3 = new AWS.S3({
+  accessKeyId:process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION
+});
+
+//multer setup for uploads
+const upload = multer({
+  storage: multer.memoryStorage(),
+})
+
+// Create Contest Controller
+export const createContest = async (req: Request, res: Response) => {
+  const {
+    productName,
+    tags,
+    videoUrl,
+    referenceUrl,
+    goal,
+    category,
+    campaign,
+    startTime,
+    imageUrl,
+    feedImageUrl,
+    currency,
+    productCode,
+    premium,
+    payToken,
+    amount,
+  } = req.body;
+
+  // Required fields validation
+  if (!productName || !category || !campaign) {
+    return res.status(400).json({ message: 'Product name, category, and campaign are required' });
+  }
+
+  try {
+    // Create a new contest in MongoDB
+    const newContest = new Contest({
+      productName,
+      tags,
+      videoUrl,
+      referenceUrl,
+      goal,
+      category,
+      campaign,
+      startTime,
+      imageUrl,
+      feedImageUrl,
+      currency,
+      productCode,
+      premium,
+      payToken,
+      amount,
+    });
+
+    await newContest.save();
+
+    // Cache the new contest in Redis
+    const contestKey = `contest:${newContest._id}`;
+    await redisClient.set(contestKey, JSON.stringify(newContest));
+
+    // Emit the new contest to clients via Socket.IO
+    io.emit('contest-created', newContest);
+
+    res.status(201).json({ message: 'Contest created successfully', contest: newContest });
+  } catch (error) {
+    console.error('Error creating contest:', error);
+    res.status(500).json({ message: 'Error creating contest', error });
+  }
 };
 
 // Edit Contest Controller
