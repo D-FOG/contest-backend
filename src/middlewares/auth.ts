@@ -10,11 +10,12 @@ declare global {
   }
 }
 
-export const protect = (req: Request, res: Response, next: NextFunction) => {
+const protect = (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const authHeader: string | undefined = req.headers.authorization;
 
     if (!authHeader){
-      return res.status(401).json({ message: `There is no aut token`});
+        res.status(401).json({ message: `There is no aut token`});
+        return;
     }
 
     if (typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
@@ -27,7 +28,6 @@ export const protect = (req: Request, res: Response, next: NextFunction) => {
           try {
               // Verify token
               const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
-
               // Add user information to the request object
               req.user = decoded; // or whatever you want to attach
               next();
@@ -39,3 +39,5 @@ export const protect = (req: Request, res: Response, next: NextFunction) => {
         }
       }
 };
+
+export default protect;

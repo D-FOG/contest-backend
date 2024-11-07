@@ -79,6 +79,10 @@ const ContestSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    campaign: {
+      type: String,
+      required: true,
+    },
     isLocked: {
       required: true,
       type: Boolean,

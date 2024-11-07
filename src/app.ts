@@ -9,6 +9,8 @@ import connectDB from './config/db';
 import authRoutes from './routes/user.routes';
 import cors, { CorsOptions } from 'cors';
 import connectSockets from './sockets';
+import contestRoutes from './routes/contest.routes';
+import { setUpSocketIO } from './sockets/socket';
 
 dotenv.config();
 
@@ -53,11 +55,27 @@ const connectToRedis = async () => {
 };
 
 connectToRedis();
-// Initialize Socket.IO
-connectSockets(io);
 
+// Set up Redis adapter for Socket.IO
+const pubClient = createClient({
+    url: process.env.REDIS_URL, // or use explicit host, port, and password as per your config
+  });
+const subClient = pubClient.duplicate();
+
+Promise.all([pubClient.connect(), subClient.connect()])
+    .then(() => {
+        io.adapter(createAdapter(pubClient, subClient));
+        console.log('Socket.IO Redis adapter connected');
+    })
+    .catch((error) => console.error('Error connecting Redis adapter:', error));
+
+
+// Initialize Socket.IO
+//connectSockets(io);
+setUpSocketIO(io);
 //Routes
 app.use('/api', authRoutes);
+app.use('/api', contestRoutes)
 
 // Start server
 const PORT = process.env.PORT || 3000;

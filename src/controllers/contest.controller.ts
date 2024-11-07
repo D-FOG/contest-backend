@@ -5,7 +5,7 @@ import { Server } from 'socket.io';
 import multer from 'multer';
 import AWS from 'aws-sdk';
 import { v4 as uuidv4 } from 'uuid';
-
+import { getSocketIO } from '../sockets/socket';
 // Set up the Redis and Socket.IO instances (assuming io is passed from app.js)
 let io: Server;
 
@@ -75,12 +75,14 @@ export const createContest = async (req: CustomRequest, res: Response): Promise<
   } = req.body;
 
   // Required fields validation
-  if (!productName || !category || !campaign) {
-    res.status(400).json({ message: 'Product name, category, and campaign are required' });
-    return;
-}
+    if (!productName || !category || !campaign) {
+        res.status(400).json({ message: 'Product name, category, and campaign are required' });
+        return;
+    }
 
   try {
+    // Get the Socket.IO instance
+    const io = getSocketIO();
 
     const imageFile = req.files?.image ? req.files.image[0] : null; // Get first image file
     const videoFile = req.files?.video ? req.files.video[0] : null; // Get first video file
@@ -152,8 +154,12 @@ export const editContest = async (req: CustomRequest, res: Response): Promise<vo
 
   try {
 
-    const contestId = req.params.id; // Get contest ID from request parameters
+    // Get the Socket.IO instance
+    const io = getSocketIO();
+
+    //const contestId = req.params.id; // Get contest ID from request parameters
     let existingContest;
+    //const id = contestId;
 
     // If contestId is provided, fetch the existing contest
     if (contestId) {
