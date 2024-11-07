@@ -74,7 +74,7 @@ Promise.all([pubClient.connect(), subClient.connect()])
 //connectSockets(io);
 setUpSocketIO(io);
 //Routes
-app.use('/api', authRoutes);
+// app.use('/api', authRoutes);
 app.use('/api', contestRoutes)
 
 // Start server
