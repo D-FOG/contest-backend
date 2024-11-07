@@ -28,11 +28,11 @@ export const signup: RequestHandler = async (req, res) => {
 
 // Login Controller
 export const login: RequestHandler = async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   try {
     // Find the admin by username
-    const admin = await Admin.findOne({ username }).exec();
+    const admin = await Admin.findOne({ email }).exec();
     if (!admin) {
       res.status(400).json({ message: 'Invalid credentials' });
       return;
