@@ -8,12 +8,15 @@
     "start": "node dist/app.js",
     "dev": "nodemon",
     "clean": "rimraf dist",
-    "build": "tsc"
+    "build": "tsc",
+    "generate-dummy-data": "ts-node src/scripts/generateDummyData.ts",
+    "log-redis-keys": "ts-node src/scripts/logRedisKeys.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@faker-js/faker": "^9.2.0",
     "@socket.io/redis-adapter": "^8.3.0",
     "@types/mongoose": "^5.11.97",
     "aws-sdk": "^2.1691.0",

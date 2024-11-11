@@ -11,6 +11,7 @@ import cors, { CorsOptions } from 'cors';
 import connectSockets from './sockets';
 import contestRoutes from './routes/contest.routes';
 import { setUpSocketIO } from './sockets/socket';
+import analyticsRoute from './routes/analytics.routes'
 
 dotenv.config();
 
@@ -35,7 +36,6 @@ const CorsOptions: CorsOptions = {
 }
  
 app.use(cors(CorsOptions));
-app.use('/auth', authRoutes);
 
 const server = http.createServer(app);
 
@@ -75,7 +75,10 @@ Promise.all([pubClient.connect(), subClient.connect()])
 setUpSocketIO(io);
 //Routes
 // app.use('/api', authRoutes);
-app.use('/api', contestRoutes)
+app.use('/auth', authRoutes);
+app.use('/api', contestRoutes);
+app.use('/api/analytics', analyticsRoute);
+
 
 // Start server
 const PORT = process.env.PORT || 3000;

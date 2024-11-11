@@ -14,6 +14,7 @@ const adminSchema = new mongoose.Schema<IAdmin>({
     username: { type: mongoose.Schema.Types.String, required: true, unique: true },
     password: { type: mongoose.Schema.Types.String, required: true },
     email: { type: mongoose.Schema.Types.String, required: true },
+    role: { type: mongoose.Schema.Types.String, default: 'admin'}
 }, { timestamps: true })
 
 adminSchema.pre("save", function (next) {

@@ -123,7 +123,14 @@ const ContestSchema = new mongoose.Schema(
     moreTapsLimit: {
       type: Number,
       default: 3
-    }
+    },
+    usersJoined: [
+        {
+          userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Player' },
+          tapCountRemaining: { type: Number }
+        }
+      ],
+    winner: { type: mongoose.Schema.Types.ObjectId, ref: 'Player' },
   },
   { timestamps: true },
 )
