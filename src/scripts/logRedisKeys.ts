@@ -47,6 +47,24 @@ const clearAllDatabases = async () => {
     }
 };
 
+const clearPlayerDatabase = async () => {
+    try {
+      // Find all keys starting with 'player'
+      const keys = await redisClient.keys('player:*');
+      
+      if (keys.length > 0) {
+        // Delete all matched keys
+        const succeeded = await redisClient.del(keys);
+        console.log(`Deleted ${succeeded} keys starting with 'player:'`);
+      } else {
+        console.log('No keys found starting with "player:"');
+      }
+    } catch (err) {
+      console.error('Error clearing player keys from database:', err);
+    }
+  };
+  
+
 const getKeyValue = async (key: string): Promise<void> => {
     try {
         const value = await redisClient.get(key);
@@ -63,13 +81,14 @@ const getKeyValue = async (key: string): Promise<void> => {
 (async () => {
     await connectToRedis();
 
-    getAllKeys();
+    //await getAllKeys();
 
     // const keys = await getAllKeys();
     // if (keys.length > 0) {
     //     await getValuesForKeys(keys);
     // }
-    getKeyValue('player:67309669db47f81fa7216b82');
+    //await getKeyValue('player:6731e266b82beb98ea44fbb4');
+    await clearPlayerDatabase();
 
     //await clearCurrentDatabase();
     // await clearAllDatabases();

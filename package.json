@@ -10,7 +10,8 @@
     "clean": "rimraf dist",
     "build": "tsc",
     "generate-dummy-data": "ts-node src/scripts/generateDummyData.ts",
-    "log-redis-keys": "ts-node src/scripts/logRedisKeys.ts"
+    "log-redis-keys": "ts-node src/scripts/logRedisKeys.ts",
+    "active-contest-dummy": "ts-node src/scripts/activeContestsDummy.ts"
   },
   "keywords": [],
   "author": "",

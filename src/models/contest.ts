@@ -1,4 +1,8 @@
 import mongoose from 'mongoose'
+const UserJoinedSchema = new mongoose.Schema({
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Player' },
+    tapCountRemaining: { type: Number },
+});
 
 const ContestSchema = new mongoose.Schema(
   {
@@ -124,12 +128,7 @@ const ContestSchema = new mongoose.Schema(
       type: Number,
       default: 3
     },
-    usersJoined: [
-        {
-          userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Player' },
-          tapCountRemaining: { type: Number }
-        }
-      ],
+    usersJoined: [UserJoinedSchema],
     winner: { type: mongoose.Schema.Types.ObjectId, ref: 'Player' },
   },
   { timestamps: true },

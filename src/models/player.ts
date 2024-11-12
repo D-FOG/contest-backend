@@ -2,6 +2,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 interface Player extends Document {
   userId: string;
+  userName: string;
   status: 'premium' | 'regular';
   contestsJoined: mongoose.Types.ObjectId[];
   contestsWon: mongoose.Types.ObjectId[];
@@ -11,6 +12,7 @@ interface Player extends Document {
 
 const playerSchema = new Schema<Player>({
   userId: { type: String, unique: true, required: true },
+  userName:{ type:String, required: true },
   status: { type: String, enum: ['premium', 'regular'], required: true },
   contestsJoined: [{ type: Schema.Types.ObjectId, ref: 'Contest' }],
   contestsWon: [{ type: Schema.Types.ObjectId, ref: 'Contest' }],

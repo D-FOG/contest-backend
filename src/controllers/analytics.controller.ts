@@ -165,6 +165,7 @@ export const getTodaySignups = async (req: Request, res: Response) => {
   
       const userDetails = {
         userId: user.userId,
+        userName: user.userName,
         status: user.status,
         totalContestsWon: user.contestsWon.length,
         totalContestsJoined: user.contestsJoined.length,
@@ -188,6 +189,7 @@ export const getTodaySignups = async (req: Request, res: Response) => {
   
       const userDetails = users.map( user => ({
         userId: user.userId,
+        userName: user.userName,
         status: user.status,
         totalContestsWon: user.contestsWon.length,
         totalContestsJoined: user.contestsJoined.length,
